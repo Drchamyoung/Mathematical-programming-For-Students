@@ -1,18 +1,16 @@
 class Solution {
  public:
-  vector<int> kWeakestRows(vector<vector<int>>& mat, int k) {
-    vector<int> ans;
-    vector<pair<int, int>> rowSums;  // (sum(mat[i]), i)
+  int maxUncrossedLines(vector<int>& nums1, vector<int>& nums2) {
+    const int m = nums1.size();
+    const int n = nums2.size();
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1));
 
-    for (int i = 0; i < mat.size(); ++i)
-      rowSums.emplace_back(accumulate(mat[i].begin(), mat[i].end(), 0), i);
+    for (int i = 1; i <= m; ++i)
+      for (int j = 1; j <= n; ++j)
+        dp[i][j] = nums1[i - 1] == nums2[j - 1]
+                       ? dp[i - 1][j - 1] + 1
+                       : max(dp[i - 1][j], dp[i][j - 1]);
 
-    ranges::sort(rowSums, ranges::less{},
-                 [](const pair<int, int>& rowSum) { return rowSum; });
-
-    for (int i = 0; i < k; ++i)
-      ans.push_back(rowSums[i].second);
-
-    return ans;
+    return dp[m][n];
   }
 };
