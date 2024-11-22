@@ -1,26 +1,29 @@
 class Solution {
  public:
-  int minEatingSpeed(vector<int>& piles, int h) {
-    int l = 1;
-    int r = ranges::max(piles);
+  vector<string> letterCombinations(string digits) {
+    if (digits.empty())
+      return {};
 
-    while (l < r) {
-      const int m = (l + r) / 2;
-      if (eatHours(piles, m) <= h)
-        r = m;
-      else
-        l = m + 1;
-    }
+    vector<string> ans;
 
-    return l;
+    dfs(digits, 0, "", ans);
+    return ans;
   }
 
  private:
-  // Returns the hours to eat all the piles with speed m.
-  int eatHours(const vector<int>& piles, int m) {
-    return accumulate(piles.begin(), piles.end(), 0,
-                      [&](int subtotal, int pile) {
-      return subtotal + (pile - 1) / m + 1;  // ceil(pile / m)
-    });
+  const vector<string> digitToLetters{"",    "",    "abc",  "def", "ghi",
+                                      "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+  void dfs(const string& digits, int i, string&& path, vector<string>& ans) {
+    if (i == digits.length()) {
+      ans.push_back(path);
+      return;
+    }
+
+    for (const char letter : digitToLetters[digits[i] - '0']) {
+      path.push_back(letter);
+      dfs(digits, i + 1, std::move(path), ans);
+      path.pop_back();
+    }
   }
 };
