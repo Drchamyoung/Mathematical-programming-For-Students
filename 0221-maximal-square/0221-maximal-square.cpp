@@ -1,20 +1,27 @@
 class Solution {
  public:
-  int maximalSquare(vector<vector<char>>& matrix) {
-    const int m = matrix.size();
-    const int n = matrix[0].size();
-    vector<vector<int>> dp(m, vector<int>(n));
-    int maxLength = 0;
+  int maxProfit(int k, vector<int>& prices) {
+    if (k >= prices.size() / 2) {
+      int sell = 0;
+      int hold = INT_MIN;
 
-    for (int i = 0; i < m; ++i)
-      for (int j = 0; j < n; ++j) {
-        if (i == 0 || j == 0 || matrix[i][j] == '0')
-          dp[i][j] = matrix[i][j] == '1' ? 1 : 0;
-        else
-          dp[i][j] = min({dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]}) + 1;
-        maxLength = max(maxLength, dp[i][j]);
+      for (const int price : prices) {
+        sell = max(sell, hold + price);
+        hold = max(hold, sell - price);
       }
 
-    return maxLength * maxLength;
+      return sell;
+    }
+
+    vector<int> sell(k + 1);
+    vector<int> hold(k + 1, INT_MIN);
+
+    for (const int price : prices)
+      for (int i = k; i > 0; --i) {
+        sell[i] = max(sell[i], hold[i] + price);
+        hold[i] = max(hold[i], sell[i - 1] - price);
+      }
+
+    return sell[k];
   }
 };
